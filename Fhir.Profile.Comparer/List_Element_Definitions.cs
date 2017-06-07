@@ -7,16 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class List_Element_Definitions
     {
         public static List<ElementDefinition> ExistingElements(StructureDefinition profileA)
         {
             var profile1 = profileA.Snapshot.Element;
-
-
-            //  element met 0..0 verwijderd (bestaat niet). Dus children elementen ook verwijderen (met cardinaliteit die niet per se 0..0 is)
             var NotExisting1 = profile1.Where(p => p.Max == "0");
             var paths1 = new List<string>();
             foreach (ElementDefinition element in NotExisting1)
@@ -37,7 +34,6 @@ namespace PogingOmIetsTeVergelijken4
 
         public static List<ElementDefinition> RemoveSlices(List<ElementDefinition> profileA)
         {
-            // slices verwijderen (en extensies)
             var list1 = new List<ElementDefinition>();
             var slicepaths = new List<string>();
 
@@ -54,7 +50,6 @@ namespace PogingOmIetsTeVergelijken4
 
             foreach(ElementDefinition element in profileA)
             {
-                // als value[x] gesliced is -> slice is valueQuantity -> die wordt dan niet verwijderd of overgeslagen?
                 if (sliceInfoList.Where(i => i.Slice == false).Where(e => PathComparison.ComparePath(e.Path, element.Path)).Any())
                 {
                     sliceInfoList.Where(i => PathComparison.ComparePath(i.Path, element.Path)).FirstOrDefault().Slice = true;
@@ -73,25 +68,6 @@ namespace PogingOmIetsTeVergelijken4
                         }
                     }
                 }
-                //if (sliceInfoList.Where(i => i.Slice == false).Select(e => e.Path).Contains(element.Path))
-                //{
-                //    sliceInfoList.Where(i => i.Path == element.Path).FirstOrDefault().Slice = true;
-                //}
-                //else if(sliceInfoList.Where(i => i.Slice == true).Select(e => e.Path).Contains(element.Path))
-                //{
-                //    var Index1Slice = sliceInfoList.Where(i => i.Path == element.Path).FirstOrDefault().IndexFirstSlice = profileA.IndexOf(element);
-
-                //    var lijst = profileA.Where(p => p.Path.StartsWith(element.Path)).ToList();
-                //    foreach (ElementDefinition e in lijst)
-                //    {
-                //        var indexElement = profileA.IndexOf(e);
-                //        if (indexElement >= Index1Slice)
-                //        {
-                //            list1.Add(e);
-                //        }
-                //    }
-                //}
-
             }
             profileA = profileA.Except(list1).ToList();
             return profileA;

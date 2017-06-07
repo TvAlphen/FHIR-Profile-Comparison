@@ -5,17 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     public static class CompareAspects
     {
         public static double Compare(ElementDefinition one, ElementDefinition two)
         {
 
-            // TODO: ALLE GEWICHTEN NOG AANPASSEN!!
             double difference = 0;
-            // als 1 element geen kinderen heeft of cardinality 0..0 heeft, vergelijk je kinderen van andere element met null (two = null)
-            // verschil tussen missend element(geen kinderen) en kind element afhankelijk van cardinality element
+            // cost depends on difference in cardinality between elements
             if (two == null)
             {
                if(StringToInteger.MaxInt(one) == 0)
@@ -39,7 +37,6 @@ namespace PogingOmIetsTeVergelijken4
             }
             if (!PathComparison.ComparePath(one.Path, two.Path))
             {
-                //Program.LogAspectDifference(AspectWeights.PATH, "Path");
                 return AspectWeights.PATH;
             }
 
@@ -87,7 +84,7 @@ namespace PogingOmIetsTeVergelijken4
                     return AspectWeights.PROHIBITED_OPTIONAL;
                 }
 
-                // ranges cardinality, andere opties 
+                // ranges cardinality, remaining options 
                 difference += CompareCardinality.CompareRangesCardinality(one, two);
             }
             // Note: API guarantees that list elements (such as ElementDefinition.Type) are never null !
@@ -117,7 +114,6 @@ namespace PogingOmIetsTeVergelijken4
                 difference += CompareValueProperty.ComparePattern(one, two, AspectWeights.WEIGHT_PATTERN);
             }
             
-            //// verschil in binding/valueset, semantisch misschien nog zelfde?
             difference += CompareBinding.DistanceBinding(one.Binding, two.Binding, AspectWeights.WEIGHT_BINDING);
             difference += CompareBase.DistanceBase(one.Base, two.Base, AspectWeights.WEIGHT_BASE);
 

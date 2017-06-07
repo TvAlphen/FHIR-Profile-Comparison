@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     public static class CompareType
     {
-        // LevenshteinDistance: return is percentage van max Levenshtein Distance
+        // return is percentage van max distance (everything differs)
         public static double DistanceType(List<ElementDefinition.TypeRefComponent> list1, List<ElementDefinition.TypeRefComponent> list2, double weight)
         {
             if (list1.Count == 0 && list2.Count == 0)
@@ -27,9 +27,9 @@ namespace PogingOmIetsTeVergelijken4
             List<ElementDefinition.TypeRefComponent> SortedList1 = list1.OrderBy(t => t.Code).ThenBy(t => t.Profile.FirstOrDefault()).ThenBy(t => AggregationSortKey(t.Aggregation)).ToList();
             List<ElementDefinition.TypeRefComponent> SortedList2 = list2.OrderBy(t => t.Code).ThenBy(t => t.Profile.FirstOrDefault()).ThenBy(t => AggregationSortKey(t.Aggregation)).ToList();
             
-            // max distance between lists nodig voor percentage different
+            // max distance between lists
             double maxdistance = Convert.ToDouble(list1.Count + list2.Count);
-            //type die in beide lijsten precies hetzelfde is uit lijsten verwijderen..gaat niet goed met sorteren als er meerdere types zijn met zelfde code ander profiel 1,2,3,4 en 4*,1,2,3 -> doet ie 4 updates ipv één -> 4 naar 4*
+            //delete exact similar types in both lists
             var intersection = SortedList1.Intersect(SortedList2, TypeComparer.Default).ToList();
             List<ElementDefinition.TypeRefComponent> L1 = SortedList1.Except(intersection, TypeComparer.Default).ToList();
             List<ElementDefinition.TypeRefComponent> L2 = SortedList2.Except(intersection, TypeComparer.Default).ToList();
@@ -46,7 +46,7 @@ namespace PogingOmIetsTeVergelijken4
                 }
             }
             L1 = L1.Except(L1_, TypeComparer.Default).ToList();
-            // L1 en L2 contain types without matching code and/or profile in counter-part --> levenstein distance
+            // L1 en L2 contain types without matching code and/or profile in counter-part -->  distance (delete / insert)
             //L1_ en L2_ contain types that differ only on aggregation -> distance L1_ en L2 is cost for update aggregation of each type in one list
             double distance = 0.0;
             for (int i = 0; i < L1_.Count; i++)
@@ -57,7 +57,7 @@ namespace PogingOmIetsTeVergelijken4
             var m = L1.Count + 1;
             var n = L2.Count + 1;
 
-            // lege lijst?
+            // empty list?
             if (m <2 && n < 2)
             {
                 Program.LogAspectDifference((distance / maxdistance) * weight, "Type");
@@ -112,9 +112,8 @@ namespace PogingOmIetsTeVergelijken4
         private static double CompareTypes(ElementDefinition.TypeRefComponent type1, ElementDefinition.TypeRefComponent type2)
         {
             double factor = 0;
-            // Different Code -> max distance???
+            // Different Code -> max distance
             if (type1.Code != type2.Code) { return AspectWeights.WEIGHT_TYPE_CODE; }
-            // Only different profile -> smaller distance
             if (type1.Profile.FirstOrDefault() != type2.Profile.FirstOrDefault()) { factor += AspectWeights.WEIGHT_TYPE_PROFILE; }
             if (AggregationSortKey(type1.Aggregation) != AggregationSortKey(type2.Aggregation)) { factor += AspectWeights.WEIGHT_TYPE_AGGREGATION; }
 
@@ -123,7 +122,6 @@ namespace PogingOmIetsTeVergelijken4
 
         private static int AggregationSortKey(IEnumerable<ElementDefinition.AggregationMode?> modes)
         {
-            // ??? Maybe change values (aggregation is not really important here)
             int result = 0;
             if (modes.Contains(ElementDefinition.AggregationMode.Contained)) result += 1;
             if (modes.Contains(ElementDefinition.AggregationMode.Referenced)) result += 2;

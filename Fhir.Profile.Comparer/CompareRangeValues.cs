@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class CompareRangeValues
     {
@@ -23,7 +23,7 @@ namespace PogingOmIetsTeVergelijken4
             {
                 if(one.MaxValue.GetType() == two.MaxValue.GetType())
                 {
-                    // ene range binnen andere, min is gelijk
+                    // one range within other range, min is equal
                     if(one.MaxValue != two.MaxValue)
                     {
                         difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
@@ -37,14 +37,14 @@ namespace PogingOmIetsTeVergelijken4
             }
             if (one.MinValue == null && two.MinValue == null && one.MaxValue == null && two.MaxValue != null)
             {
-                // ene range binnen andere, min is gelijk
+                // one range within other range, min is equal
                 difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                 Program.LogAspectDifference(difference, "ValueRange");
                 return difference;
             }
             if (one.MinValue == null && two.MinValue == null && one.MaxValue != null && two.MaxValue == null)
             {
-                // ene range binnen andere, min is gelijk
+                // one range within other range, min is equal
                 difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                 Program.LogAspectDifference(difference, "ValueRange");
                 return difference;
@@ -54,8 +54,8 @@ namespace PogingOmIetsTeVergelijken4
             {
                 if (one.MinValue.GetType() == two.MinValue.GetType())
                 {
-                    // ene range binnen andere, max is gelijk
-                    if(one.MinValue != two.MinValue)
+                    // one range within other range, max is equal
+                    if (one.MinValue != two.MinValue)
                     {
                         difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                     }
@@ -66,14 +66,14 @@ namespace PogingOmIetsTeVergelijken4
             }
             if (one.MaxValue == null && two.MaxValue == null && one.MinValue == null && two.MinValue != null)
             {
-                    // ene range binnen andere, max is gelijk
+                    // one range within other range, max is equal
                     difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                     Program.LogAspectDifference(difference, "ValueRange");
                     return difference;
             }
             if (one.MaxValue == null && two.MaxValue == null && one.MinValue != null && two.MinValue == null)
             {
-                // ene range binnen andere, max is gelijk
+                // one range within other range, max is equal
                 difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                 Program.LogAspectDifference(difference, "ValueRange");
                 return difference;
@@ -81,14 +81,14 @@ namespace PogingOmIetsTeVergelijken4
 
             if (one.MinValue == null && two.MinValue != null && one.MaxValue == null && two.MaxValue != null)
             {
-                // ene range binnen andere
+                // one range within other range
                 difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
                 Program.LogAspectDifference(difference, "ValueRange");
                 return difference;
             }
             if (two.MinValue == null && one.MinValue != null && two.MaxValue == null && one.MaxValue != null)
             {
-                // ene range binnen andere
+                // one range within other range
                 difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
                 Program.LogAspectDifference(difference, "ValueRange");
                 return difference;
@@ -100,40 +100,40 @@ namespace PogingOmIetsTeVergelijken4
                 {
                     if (two.MaxValue is FhirDateTime)
                     {
-                        //half overlap
+                        //partial overlap
                         if ((FhirDateTime)one.MaxValue < (FhirDateTime)two.MaxValue) difference += AspectWeights.VALUE_PARTIAL_OVERLAP;
-                        // ene range binnen  andere
+                        // one range within other range
                         if ((FhirDateTime)one.MaxValue > (FhirDateTime)two.MaxValue) difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
                         if ((FhirDateTime)one.MaxValue == (FhirDateTime)two.MaxValue) difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                     }
                     if (two.MaxValue is Date)
                     {
-                        //half overlap
+                        //partial overlap
                         if ((Date)one.MaxValue < (Date)two.MaxValue) difference += AspectWeights.VALUE_PARTIAL_OVERLAP;
-                        // ene range binnen  andere
+                        // one range within other range
                         if ((Date)one.MaxValue > (Date)two.MaxValue) difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
                         if ((Date)one.MaxValue == (Date)two.MaxValue) difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                     }
                     if (two.MaxValue is Instant)
                     {
-                        //half overlap
+                        //partial overlap
                         if ((Instant)one.MaxValue < (Instant)two.MaxValue) difference += AspectWeights.VALUE_PARTIAL_OVERLAP;
-                        // ene range binnen  andere
+                        // one range within other range
                         if ((Instant)one.MaxValue > (Instant)two.MaxValue) difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
                         if ((Instant)one.MaxValue == (Instant)two.MaxValue) difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                     }
                     if (two.MaxValue is Time)
                     {
-                        //half overlap
+                        //partial overlap
                         if ((Time)one.MaxValue < (Time)two.MaxValue) difference += AspectWeights.VALUE_PARTIAL_OVERLAP;
-                        // ene range binnen  andere
+                        // one range within other range
                         if ((Time)one.MaxValue > (Time)two.MaxValue) difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
                         if ((Time)one.MaxValue == (Time)two.MaxValue) difference += AspectWeights.MINVALUE_OR_MAXVALUE_DIFFERS;
                     }
                     //ignore unit
                     if (two.MaxValue is Quantity)
                     {
-                        //half overlap
+                        //partial overlap
                         if (((Quantity)one.MaxValue).Value < ((Quantity)two.MaxValue).Value) difference += AspectWeights.VALUE_PARTIAL_OVERLAP;
                         // ene range binnen  andere
                         if (((Quantity)one.MaxValue).Value > ((Quantity)two.MaxValue).Value) difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;
@@ -365,7 +365,7 @@ namespace PogingOmIetsTeVergelijken4
                 {
                     if (one.MinValue is FhirDateTime)
                     {
-                        // max van 1 is kleiner dan min van 2..geen overlap ranges
+                        // no overlap ranges
                         if ((FhirDateTime)one.MaxValue < (FhirDateTime)two.MinValue || (FhirDateTime)two.MaxValue < (FhirDateTime)one.MinValue) difference += AspectWeights.VALUE_NO_OVERLAP;
                         // range van 2 binnen range van 1
                         if ((FhirDateTime)one.MaxValue > (FhirDateTime)two.MaxValue && (FhirDateTime)one.MinValue < (FhirDateTime)two.MinValue) difference += AspectWeights.VALUE_RANGE_WITHIN_OTHER;

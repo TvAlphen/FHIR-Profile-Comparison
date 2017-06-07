@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class CompareConstraint
     {
         public static double DistanceConstraint(List<ElementDefinition.ConstraintComponent> list1, List<ElementDefinition.ConstraintComponent> list2, double weight)
         {
-            // geen lege lijst vergelijken 
             if (!list1.Any() && !list2.Any())
             {
                 return 0.0;
@@ -26,7 +25,7 @@ namespace PogingOmIetsTeVergelijken4
             List<ElementDefinition.ConstraintComponent> SortedList1 = list1.OrderBy(c => c.Xpath).ThenBy(c => c.Severity).ThenBy(c => c.Key).ThenBy(c => c.Human).ThenBy(c => c.Requirements).ToList();
             List<ElementDefinition.ConstraintComponent> SortedList2 = list2.OrderBy(c => c.Xpath).ThenBy(c => c.Severity).ThenBy(c => c.Key).ThenBy(c => c.Human).ThenBy(c => c.Requirements).ToList();
             double maxdistance = Convert.ToDouble(list1.Count + list2.Count);
-            //constraints die in beide lijsten precies hetzelfde is uit lijsten verwijderen..gaat niet goed met sorteren + LD 
+            //delete exact similar constraints in both lists 
             var intersection = SortedList1.Intersect(SortedList2, ConstraintComparer.Default).ToList();
             List<ElementDefinition.ConstraintComponent> L1 = SortedList1.Except(intersection, ConstraintComparer.Default).ToList();
             List<ElementDefinition.ConstraintComponent> L2 = SortedList2.Except(intersection, ConstraintComparer.Default).ToList();
@@ -89,7 +88,7 @@ namespace PogingOmIetsTeVergelijken4
             }
             L1 = L1.Except(L, ConstraintComparer.Default).ToList();
             L.Clear();
-            // L1 en L2 contain constraints without matching xpath and/or severity/human in counter-part --> levenstein distance
+            // L1 en L2 contain constraints without matching xpath and/or severity/human in counter-part -->  distance (delete, insert)
             //L1_ en L2_ contain codes that differ only on... -> distance L1_ en L2_ is cost for update operations
             double distance = 0.0;
             for (int i = 0; i < L1_.Count; i++)
@@ -100,7 +99,7 @@ namespace PogingOmIetsTeVergelijken4
             var m = L1.Count + 1;
             var n = L2.Count + 1;
 
-            // lege lijst L1 of L2 (door remove)?
+            // empty lists?
             if (m < 2 && n < 2)
             {
                 Program.LogAspectDifference((distance / maxdistance) * weight, "Constraint");

@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class CompareRepresentation
     {
         public static double DistanceRepresentation(IEnumerable<ElementDefinition.PropertyRepresentation?> list1, IEnumerable<ElementDefinition.PropertyRepresentation?> list2, double weight)
         {
-            // lege lijst vergelijken met levenstein...geeft uitkomst NAN, 
             if (!list1.Any() && !list2.Any())
             { 
                 return 0.0;

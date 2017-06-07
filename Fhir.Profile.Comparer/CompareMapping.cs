@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class CompareMapping
     {
         public static double DistanceMapping(List<ElementDefinition.MappingComponent> list1, List<ElementDefinition.MappingComponent> list2, double weight)
         {
-            // lege lijst vergelijken met levenstein...geeft uitkomst NAN, 
             if (!list1.Any() && !list2.Any())
             {
                 return 0.0;
@@ -26,7 +25,7 @@ namespace PogingOmIetsTeVergelijken4
             List<ElementDefinition.MappingComponent> SortedList1 = list1.OrderBy(map => map.Identity).ThenBy(map => map.Map).ThenBy(map => map.Language).ToList();
             List<ElementDefinition.MappingComponent> SortedList2 = list2.OrderBy(map => map.Identity).ThenBy(map => map.Map).ThenBy(map => map.Language).ToList();
             double maxdistance = Convert.ToDouble(list1.Count + list2.Count);
-            //mapping die in beide lijsten precies hetzelfde is uit lijsten verwijderen..gaat niet goed met sorteren als er meerdere mappings zijn met zelfde identity ander map
+            //delete exact similar mappings in both lists
             var intersection = SortedList1.Intersect(SortedList2, MappingComparer.Default).ToList();
             List<ElementDefinition.MappingComponent> L1 = SortedList1.Except(intersection, MappingComparer.Default).ToList();
             List<ElementDefinition.MappingComponent> L2 = SortedList2.Except(intersection, MappingComparer.Default).ToList();
@@ -43,7 +42,7 @@ namespace PogingOmIetsTeVergelijken4
                 }
             }
             L1 = L1.Except(L1_, MappingComparer.Default).ToList();
-            // L1 en L2 contain mappings without matching identity and/or map in counter-part --> levenstein distance
+            // L1 en L2 contain mappings without matching identity and/or map in counter-part -->  distance (insert, delete)
             //L1_ en L2_ contain mappings that differ only on language -> distance L1_ en L2 is cost for updating language of each mapping in one list
             double distance = 0.0;
             for (int i = 0; i < L1_.Count; i++)
@@ -54,7 +53,7 @@ namespace PogingOmIetsTeVergelijken4
             var m = L1.Count + 1;
             var n = L2.Count + 1;
 
-            // lege lijst?
+            // empty list?
             if (m < 2 && n < 2)
             {
                 Program.LogAspectDifference((distance / maxdistance) * weight, "Mapping");

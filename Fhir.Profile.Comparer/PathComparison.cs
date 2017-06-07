@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class PathComparison
     {
@@ -42,16 +42,6 @@ namespace PogingOmIetsTeVergelijken4
                     }
                 }
             }
-
-            //value[x] en effective[x] in observation.. voor andere resources andere toevoegen?
-            //else if(one.Split('.').Last().StartsWith("value") && two.Split('.').Last().StartsWith("value") && one.Split('.').Count() == two.Split('.').Count())
-            //{
-            //    return true;
-            //}
-            //else if (one.Split('.').Last().StartsWith("effective") && two.Split('.').Last().StartsWith("effective") && one.Split('.').Count() == two.Split('.').Count())
-            //{
-            //    return true;
-            //}
             return false;
         }
     }

@@ -1,7 +1,7 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 using Hl7.Fhir.Specification.Navigation;
-using PogingOmIetsTeVergelijken4.Properties;
+using ProfileComparisonMethod.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,16 +11,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class LogElementsWithoutCounterPart
     {
         public static void Log(List<ElementDefinition> profile1, List<ElementDefinition> profile2)
         {
-            //////////checken welke elementen (path) in profiel 1 zitten en niet in 2 -> voor log bestand////////////////////
+            // elements (path) in profile 1 but not in profile 2 -> log
             foreach (ElementDefinition element in profile1)
             {
-                // als slices verwijderd zijn is er van elk pad maar 1 element, behalve bij meer extensies..
                 if (!profile2.Where(p => PathComparison.ComparePath(p.Path, element.Path)).Any())
                 {
                     var cost = 0.0;
@@ -40,7 +39,6 @@ namespace PogingOmIetsTeVergelijken4
             }
             foreach (ElementDefinition element in profile2)
             {
-                // als slices verwijderd zijn is er van elk pad maar 1 element, behalve bij meer extensies..
                 if (!profile1.Where(p => PathComparison.ComparePath(p.Path, element.Path)).Any())
                 {
                     var cost = 0.0;

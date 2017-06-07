@@ -5,13 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PogingOmIetsTeVergelijken4
+namespace ProfileComparisonMethod
 {
     class CompareCode
     {
         public static double DistanceCode(List<Coding> list1, List<Coding> list2, double weight)
         {
-            // lege lijst vergelijken met levenstein...geeft uitkomst NAN, 
             if (!list1.Any() && !list2.Any())
             {
                 return 0.0;
@@ -26,7 +25,7 @@ namespace PogingOmIetsTeVergelijken4
             List<Coding> SortedList1 = list1.OrderBy(c => c.System).ThenBy(c => c.Version).ThenBy(c => c.Code).ThenBy(c => c.Display).ThenBy(c => c.UserSelected).ToList();
             List<Coding> SortedList2 = list2.OrderBy(c => c.System).ThenBy(c => c.Version).ThenBy(c => c.Code).ThenBy(c => c.Display).ThenBy(c => c.UserSelected).ToList();
             double maxdistance = Convert.ToDouble(list1.Count + list2.Count);
-            //Coding die in beide lijsten precies hetzelfde is uit lijsten verwijderen..gaat niet goed met sorteren + LD 
+            //Delete exact similar Codings in both lists 
             var intersection = SortedList1.Intersect(SortedList2, CodeComparer.Default).ToList();
             List<Coding> L1 = SortedList1.Except(intersection, CodeComparer.Default).ToList();
             List<Coding> L2 = SortedList2.Except(intersection, CodeComparer.Default).ToList();
@@ -102,7 +101,7 @@ namespace PogingOmIetsTeVergelijken4
                 }
             }
             L1 = L1.Except(L, CodeComparer.Default).ToList();
-            // L1 en L2 contain codes without matching system and/or version in counter-part --> levenstein distance
+            // L1 en L2 contain codes without matching system and/or version in counter-part --> distance (insert, delete)
             //L1_ en L2_ contain codes that differ only on... -> distance L1_ en L2_ is cost for update operations
             double distance = 0.0;
             for (int i = 0; i < L1_.Count; i++)
@@ -113,7 +112,7 @@ namespace PogingOmIetsTeVergelijken4
             var m = L1.Count + 1;
             var n = L2.Count + 1;
 
-            // lege lijst L1 of L2 (door removes)?
+            // empty lists?
             if (m < 2 && n < 2)
             {
                 Program.LogAspectDifference((distance / maxdistance) * weight, "Code");
